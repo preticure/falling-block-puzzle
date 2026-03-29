@@ -1,24 +1,28 @@
-CC 		= gcc
-TARGET 	= build/main
-SRCS 	= main.c game.c score.c terminal.c mino.c field.c
-HDRS 	= $(wildcard $(INC)*.h)
-INC 	= src/
+CC 			= gcc
+CFLAGS 		= -Isrc/core -Isrc/tui
 
-$(TARGET): $(addprefix $(INC), $(SRCS))
-	$(CC) $(addprefix $(INC), $(SRCS)) -o $(TARGET)
+# TUI
+TUI_TARGET 	= build/main
+CORE_SRCS 	= src/core/game.c src/core/score.c src/core/mino.c src/core/field.c
+TUI_SRCS 	= src/tui/main.c src/tui/terminal.c
 
-TEST_CFLAGS = -IUnity/src -Isrc
+$(TUI_TARGET): $(CORE_SRCS) $(TUI_SRCS) 
+	$(CC) $(CFLAGS) $(CORE_SRCS) $(TUI_SRCS) -o $(TUI_TARGET)
+
+# Test
 TEST_TARGET = build/test_runner
-TEST_SRCS	= test/test_mino.c src/game.c src/mino.c Unity/src/unity.c
+TEST_CFLAGS = -IUnity/src -Isrc/core
+TEST_SRCS	= test/test_mino.c $(CORE_SRCS) Unity/src/unity.c
 
 $(TEST_TARGET): $(TEST_SRCS)
 	$(CC) $(TEST_CFLAGS) $(TEST_SRCS) -o $(TEST_TARGET)
 
-run: $(TARGET)
-	./$(TARGET)
+# Commands
+run-tui: $(TUI_TARGET)
+	./$(TUI_TARGET)
 
 format:
-	clang-format -i $(addprefix $(INC), $(SRCS)) $(HDRS)
+	clang-format -i $(CORE_SRCS) $(TUI_SRCS) $(wildcard src/core/*.h) $(wildcard src/tui/*.h)
 
 test: $(TEST_TARGET)
 	./$(TEST_TARGET)
