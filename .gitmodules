@@ -2,5 +2,5 @@
 	path = Unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
 [submodule "SDL"]
-	path = SDL
+	path = vendored/SDL
 	url = https://github.com/libsdl-org/SDL
